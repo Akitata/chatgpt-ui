@@ -12,9 +12,10 @@ import (
 )
 
 var (
-	addr  = flag.String("adrr", "0.0.0.0:3000", "ip and port to listen")
-	token = flag.String("token", "sk-xxx", "chatgpt api token.")
-	prod  = flag.Bool("prod", false, "Enable prefork in Production")
+	addr      = flag.String("adrr", "0.0.0.0:3000", "ip and port to listen")
+	token     = flag.String("token", "sk-token", "chatgpt api token.")
+	prod      = flag.Bool("prod", false, "Enable prefork in Production")
+	proxy_url = flag.String("proxy_url", "", "http proxy addr")
 )
 
 //go:embed  public/*
@@ -23,7 +24,7 @@ var publicFS embed.FS
 func main() {
 	flag.Parse()
 
-	chat.InitChatClient(*token)
+	chat.InitChatClient(*token, *proxy_url)
 
 	app := fiber.New(fiber.Config{
 		Prefork: *prod,
