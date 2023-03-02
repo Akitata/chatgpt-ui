@@ -27,11 +27,17 @@ func Chat(ctx *fiber.Ctx) error {
 		})
 	}
 
-	response, err := chat.GPTClient.CreateCompletion(ctx.UserContext(), gogpt.CompletionRequest{
-		Model:     gogpt.GPT3TextDavinci003,
-		Prompt:    prompt,
+	response, err := chat.GPTClient.CreateChatCompletion(ctx.UserContext(), gogpt.ChatCompletionRequest{
+		Model: gogpt.GPT3Dot5Turbo,
+		Messages: []gogpt.ChatCompletionMessage{
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
 		MaxTokens: 2000,
 		N:         1,
+		Stream:    false,
 		User:      uidStr,
 	})
 
@@ -45,7 +51,7 @@ func Chat(ctx *fiber.Ctx) error {
 		})
 	}
 
-	answer := response.Choices[0].Text
+	answer := response.Choices[0].Message.Content
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"type": "text",
 		"content": fiber.Map{
